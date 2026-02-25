@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+aiosqlite
+pydantic
+httpx
+python-multipart
+websockets
+starlette
+nats-py
+pydantic_settings
