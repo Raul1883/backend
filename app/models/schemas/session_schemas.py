@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 
+from app.models.schemas.named_entity import NamedEntity
+
 
 class SessionCreate(BaseModel):
     title: str
@@ -9,21 +11,18 @@ class SessionCreate(BaseModel):
     master_id: int
     system_id: int
     genre_id: int
-    company: Optional[str] = None
-
-
-class SessionUpdate(BaseModel):
-    title: Optional[str] = None
-    short_description: Optional[str] = None
-    description: Optional[str] = None
+    company_id: Optional[int] = None
 
 
 class SessionRead(BaseModel):
     id: int
     title: str
-    short_description: str
-    description: str
-    is_locked: bool
+    description: Optional[str]
+    scheduled_at: Optional[str] = None
+    master: NamedEntity
+    system: NamedEntity
+    genre: NamedEntity
+    company: NamedEntity
 
     class Config:
         from_attributes = True

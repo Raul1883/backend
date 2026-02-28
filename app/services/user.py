@@ -1,4 +1,4 @@
-from app.Exceptions.service_exceptions import UserAlreadyExistsError
+from app.exceptions.service_exceptions import UserAlreadyExistsError
 import bcrypt
 
 from app.models.orm.models import User
@@ -38,6 +38,12 @@ async def create_user(session: AsyncSession, user_data: UserCreate):
     await session.refresh(new_user_orm)
 
     return new_user_orm
+
+
+async def get_all_users(session: AsyncSession):
+    result = await session.execute(select(User))
+
+    return result
 
 
 async def get_user_by_id(session: AsyncSession, user_id: int):

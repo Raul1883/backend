@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import quest_dep
+from app.api import sessions
 
 from app.db.db import init_db
 from app.config import config
@@ -36,6 +37,7 @@ app = FastAPI(
 )
 
 app.include_router(quest_dep.router)
+app.include_router(sessions.router)
 
 @app.get("/")
 def read_root():

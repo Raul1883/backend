@@ -62,12 +62,20 @@ class Genre(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(String, unique=True)
 
+    sessions: Mapped[list["Session"]] = relationship(
+        back_populates="genre",
+    )
+
 
 class System(Base):
     __tablename__ = "systems"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(String, unique=True)
+
+    sessions: Mapped[list["Session"]] = relationship(
+        back_populates="system",
+    )
 
 
 class Session(Base):
@@ -93,6 +101,16 @@ class Session(Base):
     )
 
     company: Mapped["Company | None"] = relationship(
+        back_populates="sessions",
+    )
+
+    system: Mapped["System"] = relationship(
+        foreign_keys=[system_id],
+        back_populates="sessions",
+    )
+
+    genre: Mapped["Genre"] = relationship(
+        foreign_keys=[genre_id],
         back_populates="sessions",
     )
 
