@@ -16,6 +16,7 @@ from sqlalchemy.orm import (
 from app.db.db import Base
 
 
+
 class User(Base):
     __tablename__ = "users"
 

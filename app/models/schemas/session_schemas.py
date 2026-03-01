@@ -26,3 +26,25 @@ class SessionRead(BaseModel):
 
     class Config:
         from_attributes = True
+
+class GenreSchema(BaseModel):
+    id: int
+    text: str
+
+    class Config:
+        from_attributes = True
+
+class SystemSchema(BaseModel):
+    id: int
+    text: str
+
+    class Config:
+        from_attributes = True
+
+class CompanySchema(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+
+    class Config:
+        from_attributes = True

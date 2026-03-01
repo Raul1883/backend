@@ -17,7 +17,6 @@ router = APIRouter(
 @router.get("/{user_id}", response_model=UserRead, summary="Получить user по ID")
 async def read_user(user_id: int, session: AsyncSession = Depends(get_async_session)):
     user_orm = await user.get_user_by_id(session, user_id)
-
     await raise_404_if_none(user_orm, user_id)
 
     return user_orm
@@ -27,7 +26,7 @@ async def read_user(user_id: int, session: AsyncSession = Depends(get_async_sess
     "/",
     response_model=UserRead,
     status_code=status.HTTP_201_CREATED,
-    summary="Создать user",
+    summary="ddddr",
 )
 async def create_quest(
     user_data: UserCreate,
