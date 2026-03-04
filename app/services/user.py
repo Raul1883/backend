@@ -1,3 +1,4 @@
+from app.db.repositories import BaseRepository
 from app.exceptions.service_exceptions import UserAlreadyExistsError
 import bcrypt
 
@@ -21,35 +22,34 @@ async def verify_password(password: str, hashed_password: str) -> bool:
     except ValueError:
         return False
 
+def get_session_repository(session):
+    return BaseRepository(session, User)
 
 async def create_user(session: AsyncSession, user_data: UserCreate):
+    repository = get_session_repository()
     user_data_dump = user_data.model_dump()
 
     if get_user_by_login(session, user_data_dump["login"]):
         raise UserAlreadyExistsError(user_data_dump["login"])
-    
+
     user_data_dump["hashed_pwd"] = await hash_password(user_data_dump.pop("password"))
 
     new_user_orm = User(**user_data_dump)
 
-    session.add(new_user_orm)
-
-    await session.commit()
-    await session.refresh(new_user_orm)
-
-    return new_user_orm
+    return await repository.create(new_user_orm)
 
 
 async def get_all_users(session: AsyncSession):
-    result = await session.execute(select(User))
-
-    return result
+    repository = get_session_repository(session)
+    return await repository.get_all()
 
 
 async def get_user_by_id(session: AsyncSession, user_id: int):
-    result = await session.get(User, user_id)
+    repository = get_session_repository(session)
 
-    return result
+    return await repository.get_by_id(user_id)
+
+
 
 async def get_user_by_login(session: AsyncSession, login: str):
     stmt = select(User).where(User.login == login)
