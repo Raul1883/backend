@@ -22,30 +22,28 @@ async def verify_password(password: str, hashed_password: str) -> bool:
     except ValueError:
         return False
 
-def get_session_repository(session):
+def get_user_repository(session):
     return BaseRepository(session, User)
 
 async def create_user(session: AsyncSession, user_data: UserCreate):
-    repository = get_session_repository()
+    repository = get_user_repository(session)
     user_data_dump = user_data.model_dump()
 
-    if get_user_by_login(session, user_data_dump["login"]):
+    if await get_user_by_login(session, user_data_dump["login"]):
         raise UserAlreadyExistsError(user_data_dump["login"])
 
     user_data_dump["hashed_pwd"] = await hash_password(user_data_dump.pop("password"))
 
-    new_user_orm = User(**user_data_dump)
-
-    return await repository.create(new_user_orm)
+    return await repository.create(**user_data_dump)
 
 
 async def get_all_users(session: AsyncSession):
-    repository = get_session_repository(session)
+    repository = get_user_repository(session)
     return await repository.get_all()
 
 
 async def get_user_by_id(session: AsyncSession, user_id: int):
-    repository = get_session_repository(session)
+    repository = get_user_repository(session)
 
     return await repository.get_by_id(user_id)
 

@@ -24,7 +24,7 @@ class User(Base):
     login: Mapped[str] = mapped_column(String, unique=True, index=True)
     hashed_pwd: Mapped[str] = mapped_column(String)
     contact_info: Mapped[str | None] = mapped_column(String, nullable=True)
-    roles: Mapped[str] = mapped_column(String)
+    role: Mapped[str] = mapped_column(String)
     # example: "player,master"
 
     characters: Mapped[list["Character"]] = relationship(

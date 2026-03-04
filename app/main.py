@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import quest_dep
+from app.api import quest_dep, user
 
 from app.api.sessions import sessions
 from app.db.db import init_db
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="ttr manager", description="api for ttr manager", lifespan=lifespan)
 
-# app.include_router(quest_dep.router)
+app.include_router(user.router)
 app.include_router(sessions.global_session_router)
 
 

@@ -39,4 +39,10 @@ class ForeignKeyViolationError(AppException):
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         )
 
+class ActionNotAllowedError(AppException):
+    def __init__(self, user_role: str):
+        super().__init__(
+            message=f"User with role: {user_role} can't do this",
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        )
 

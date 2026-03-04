@@ -30,7 +30,6 @@ async def read_user(user_id: int, session: AsyncSession = Depends(get_async_sess
 )
 async def create_quest(
     user_data: UserCreate,
-    request: Request,
     session: AsyncSession = Depends(get_async_session),
 ):
     try:
