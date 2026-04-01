@@ -32,11 +32,27 @@ class BaseRepository(Generic[ModelType]):
         return result.scalars().all()
 
     async def update(self, id: int, **kwargs) -> Optional[ModelType]:
-        await self.session.execute(
-            update(self.model_class).where(self.model_class.id == id).values(**kwargs)
+        update_data = {k: v for k, v in kwargs.items() if v is not None}
+        
+        if not update_data:
+            return await self.get_by_id(id)
+        
+        stmt = (
+            update(self.model_class)
+            .where(self.model_class.id == id)
+            .values(**update_data)
+            .returning(self.model_class)  
         )
+        
+        result = await self.session.execute(stmt)
         await self.session.commit()
-        return await self.get_by_id(id)
+        
+        updated_obj = result.scalar_one_or_none()
+        
+        if updated_obj:
+            await self.session.refresh(updated_obj)
+            
+        return updated_obj
 
     async def delete(self, id: int) -> bool:
         result = await self.session.execute(

@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.post(
-    "/",
+    "",
     response_model=UserRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create user",
@@ -29,7 +29,7 @@ async def create_user(
 
 
 @router.get(
-    "/",
+    "",
     response_model=List[UserRead],
     summary="get all users"
 )

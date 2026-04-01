@@ -13,8 +13,22 @@ class GenreSchema(BaseModel):
         from_attributes = True
 
 
+class CreateGenreSchema(BaseModel):
+    text: str
+
+    class Config:
+        from_attributes = True
+
+
 class SystemSchema(BaseModel):
     id: int
+    text: str
+
+    class Config:
+        from_attributes = True
+
+
+class CreateSystemSchema(BaseModel):
     text: str
 
     class Config:
@@ -25,6 +39,21 @@ class CompanySchema(BaseModel):
     id: int
     title: str
     description: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+class CreateCompanySchema(BaseModel):
+    title: str
+    description: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class ShortCompanySchema(BaseModel):
+    id: int
+    text: str
 
     class Config:
         from_attributes = True
@@ -48,7 +77,20 @@ class SessionRead(BaseModel):
     master: UserRead
     system: SystemSchema
     genre: GenreSchema
-    company: CompanySchema
+    company: Optional[CompanySchema] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SessionUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    scheduled_at: str | None = None
+    master_id: int | None = None
+    system_id: int | None = None
+    genre_id: int | None = None
+    company_id: int | None = None
 
     class Config:
         from_attributes = True

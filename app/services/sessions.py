@@ -11,8 +11,12 @@ from app.exceptions.service_exceptions import (
     AttributeNotFound,
 )
 from app.models.schemas.named_entity import NamedEntity
-from app.models.schemas.session_schemas import SessionCreate, SessionRead
-from app.models.orm.models import Genre, Session, System, User
+from app.models.schemas.session_schemas import (
+    CreateGenreSchema,
+    SessionCreate,
+    SessionRead,
+)
+from app.models.orm.models import Company, Genre, Session, System, User
 from sqlalchemy.orm import selectinload
 
 from app.db.repositories import BaseRepository
@@ -33,8 +37,7 @@ async def create_session(session: AsyncSession, session_data: SessionCreate):
     try:
         session_repository = BaseRepository(session, Session)
         new_orm = await session_repository.create(**session_data.model_dump())
-
-        return new_orm
+        return await get_session_by_id(session, new_orm.id)
     except IntegrityError as e:
         raise ForeignKeyViolationError(f"Foreign key violation: {e}")
 
@@ -53,8 +56,43 @@ async def get_all_sessions(session: AsyncSession):
 
 
 async def get_session_by_id(session: AsyncSession, session_id: int):
-    repository = BaseRepository(session, Genre)
-    return await repository.get_by_id(session_id)
+
+    result = await session.execute(
+        select(Session)
+        .where(Session.id == session_id)
+        .options(
+            selectinload(Session.master),
+            selectinload(Session.system),
+            selectinload(Session.genre),
+            selectinload(Session.company),
+        )
+    )
+    orm = result.scalars().one_or_none()
+
+    return await validate_session_orm(orm)
+
+
+async def validate_session_orm(orm: Session | None):
+    if orm is None:
+        return None
+
+    if orm.company_id is None:
+        orm.company_id = -1
+        orm.company = Company(id = -1, title="OneShot", description="desc")
+
+    return orm
+
+async def update_session(
+    session: AsyncSession, session_id: int, session_data: SessionCreate
+):
+    repository = BaseRepository(session, Session)
+    await repository.update(session_id, **session_data.model_dump(exclude_unset=True))
+    return await get_session_by_id(session, session_id)
+
+
+async def delete_session(session: AsyncSession, session_id: int):
+    repository = BaseRepository(session, Session)
+    return await repository.delete(session_id)
 
 
 ## Sessions attributes
@@ -65,9 +103,10 @@ def get_atribute_repository(session: AsyncSession, model_class: Base) -> BaseRep
 
 
 async def create_attribute(
-    session: AsyncSession, model_class: Base, data: Dict[str, str]
+    session: AsyncSession, model_class: Base, data: CreateGenreSchema
 ):
     try:
+        data = data.model_dump()
         repository = get_atribute_repository(session, model_class)
         return await repository.create(**data)
     except IntegrityError:
