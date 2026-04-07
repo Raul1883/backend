@@ -36,7 +36,7 @@ class CreateSystemSchema(BaseModel):
 
 
 class CompanySchema(BaseModel):
-    id: int
+    id: Optional[int]
     title: str
     description: Optional[str]
 
@@ -52,22 +52,24 @@ class CreateCompanySchema(BaseModel):
 
 
 class ShortCompanySchema(BaseModel):
-    id: int
+    id: Optional[int]
     text: str
 
     class Config:
         from_attributes = True
 
 
-class SessionCreate(BaseModel):
+class SessionRequest(BaseModel):
     title: str
     description: Optional[str]
     scheduled_at: Optional[str] = None
-    master_id: int
     system_id: int
     genre_id: int
     company_id: Optional[int] = None
 
+
+class SessionCreate(SessionRequest):
+    master_id: int
 
 class SessionRead(BaseModel):
     id: int

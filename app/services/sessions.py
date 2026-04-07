@@ -14,6 +14,7 @@ from app.models.schemas.named_entity import NamedEntity
 from app.models.schemas.session_schemas import (
     CreateGenreSchema,
     SessionCreate,
+    SessionRequest,
     SessionRead,
 )
 from app.models.orm.models import Company, Genre, Session, System, User
@@ -26,17 +27,18 @@ from app.exceptions.service_exceptions import ActionNotAllowedError
 ## Sessions
 
 
-async def create_session(session: AsyncSession, session_data: SessionCreate):
+async def create_session(
+    session: AsyncSession, user: User, session_data: SessionRequest
+):
 
-    user_repository = BaseRepository(session, User)
-    creator = await user_repository.get_by_id(session_data.master_id)
-
-    if creator.role != "master":
-        raise ActionNotAllowedError(creator.role)
+    if user.role != "master":
+        raise ActionNotAllowedError(user.role)
 
     try:
         session_repository = BaseRepository(session, Session)
-        new_orm = await session_repository.create(**session_data.model_dump())
+        new_orm = await session_repository.create(
+            **session_data.model_dump(), master_id=user.id
+        )
         return await get_session_by_id(session, new_orm.id)
     except IntegrityError as e:
         raise ForeignKeyViolationError(f"Foreign key violation: {e}")
@@ -77,16 +79,16 @@ async def validate_session_orm(orm: Session | None):
         return None
 
     if orm.company_id is None:
-        orm.company_id = -1
-        orm.company = Company(id = -1, title="OneShot", description="desc")
+        orm.company = Company(id=None, title="OneShot", description="desc")
 
     return orm
 
+
 async def update_session(
-    session: AsyncSession, session_id: int, session_data: SessionCreate
+    session: AsyncSession, session_id: int, user: User, session_data: SessionRequest
 ):
     repository = BaseRepository(session, Session)
-    await repository.update(session_id, **session_data.model_dump(exclude_unset=True))
+    await repository.update(session_id, **session_data.model_dump(exclude_unset=True), master_id=user.id)
     return await get_session_by_id(session, session_id)
 
 

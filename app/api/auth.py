@@ -9,7 +9,12 @@ from app.models.schemas.user_schemas import (
     UserCreate,
     UserRead,
 )
-from app.services.user import authenticate_user, create_user, get_user_by_id, get_user_by_login
+from app.services.user import (
+    authenticate_user,
+    create_user,
+    get_user_by_id,
+    get_user_by_login,
+)
 from app.services.auth import create_access_token, create_refresh_token, verify_token
 from app.services.refresh_token import (
     create_refresh_token_record,
@@ -70,29 +75,30 @@ async def refresh_token(
     response: Response,
     session: AsyncSession = Depends(get_async_session),
 ):
-    # Получаем refresh token из cookie
     refresh_token = request.cookies.get("refresh_token")
+
     if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Refresh token not found",
         )
-
+    
     stored_token = await get_valid_refresh_token(session, refresh_token)
     if not stored_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or revoked refresh token",
         )
-
+    
     payload = verify_token(refresh_token)
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token",
         )
-
+    
     user = await get_user_by_id(session, int(payload["sub"]))
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

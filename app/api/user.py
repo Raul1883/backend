@@ -13,11 +13,11 @@ from app.services import user
 
 
 router = APIRouter(
-    prefix="/user",
+    prefix="/users",
     tags=["User"],
 )
 
-@router.get("/auth/me")
+@router.get("/profile")
 async def get_me(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "login": current_user.login}
 

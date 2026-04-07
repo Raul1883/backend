@@ -5,13 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.db import get_async_session
 from app.db.repositories import BaseRepository
+from app.dependencies.auth import MasterUser
 from app.exceptions.service_exceptions import ForeignKeyViolationError
 from app.models.orm.models import Company, Genre, System
 from app.models.schemas.session_schemas import (
     CompanySchema,
     CreateSystemSchema,
     GenreSchema,
-    SessionCreate,
+    SessionRequest,
     SessionRead,
     SystemSchema,
 )
@@ -34,6 +35,7 @@ router = APIRouter(
 )
 async def create_system(
     system: CreateSystemSchema,
+    current_user: MasterUser,
     session: AsyncSession = Depends(get_async_session),
 ):
     return await sessions.create_attribute(session, System, system)
@@ -59,5 +61,9 @@ async def get_system_by_id(
 
 
 @router.delete("/system/{system_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_system(system_id: int, session: AsyncSession = Depends(get_async_session)):
+async def delete_system(
+    system_id: int,
+    current_user: MasterUser,
+    session: AsyncSession = Depends(get_async_session),
+):
     await sessions.delete_attribute(session, System, system_id)
