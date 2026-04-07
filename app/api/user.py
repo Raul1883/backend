@@ -17,16 +17,17 @@ router = APIRouter(
     tags=["User"],
 )
 
-@router.get("/profile")
+
+@router.get("/profile", response_model=UserRead)
 async def get_me(current_user: User = Depends(get_current_user)):
-    return {"id": current_user.id, "login": current_user.login}
+    return {
+        "id": current_user.id,
+        "login": current_user.login,
+        "role": current_user.role,
+        "contact_info": current_user.contact_info,
+    }
 
 
-
-@router.get(
-    "",
-    response_model=List[UserRead],
-    summary="get all users"
-)
+@router.get("", response_model=List[UserRead], summary="get all users")
 async def get_all_user(session: AsyncSession = Depends(get_async_session)):
     return await user.get_all_users(session)
