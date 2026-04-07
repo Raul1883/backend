@@ -5,6 +5,8 @@ from starlette import status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.db import get_async_session
+from app.dependencies.auth import get_current_user
+from app.models.orm.models import User
 from app.models.schemas.user_schemas import UserCreate, UserRead
 
 from app.services import user
@@ -15,17 +17,10 @@ router = APIRouter(
     tags=["User"],
 )
 
+@router.get("/auth/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    return {"id": current_user.id, "login": current_user.login}
 
-@router.post(
-    "",
-    response_model=UserRead,
-    status_code=status.HTTP_201_CREATED,
-    summary="Create user",
-)
-async def create_user(
-    user_data: UserCreate, session: AsyncSession = Depends(get_async_session)
-):
-    return await user.create_user(session, user_data)
 
 
 @router.get(

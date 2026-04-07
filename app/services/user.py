@@ -22,8 +22,10 @@ async def verify_password(password: str, hashed_password: str) -> bool:
     except ValueError:
         return False
 
+
 def get_user_repository(session):
     return BaseRepository(session, User)
+
 
 async def create_user(session: AsyncSession, user_data: UserCreate):
     repository = get_user_repository(session)
@@ -37,6 +39,17 @@ async def create_user(session: AsyncSession, user_data: UserCreate):
     return await repository.create(**user_data_dump)
 
 
+async def authenticate_user(
+    session: AsyncSession, login: str, password: str
+) -> User | None:
+    user = await get_user_by_login(session, login)
+    if not user:
+        return None
+    if not await verify_password(password, user.hashed_pwd):
+        return None
+    return user
+
+
 async def get_all_users(session: AsyncSession):
     repository = get_user_repository(session)
     return await repository.get_all()
@@ -46,7 +59,6 @@ async def get_user_by_id(session: AsyncSession, user_id: int):
     repository = get_user_repository(session)
 
     return await repository.get_by_id(user_id)
-
 
 
 async def get_user_by_login(session: AsyncSession, login: str):

@@ -10,6 +10,7 @@ from app.api.sessions import genre
 from app.api.sessions import system
 from app.api.sessions import sessions
 from app.api.sessions import company
+from app.api import auth
 
 
 from app.db.db import init_db
@@ -47,6 +48,8 @@ app_router.include_router(genre.router)
 app_router.include_router(system.router)
 app_router.include_router(sessions.router)
 app_router.include_router(company.router)
+app_router.include_router(auth.router)
+
 
 app.include_router(app_router)
 

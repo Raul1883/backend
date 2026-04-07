@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.db import get_async_session
+from app.dependencies.auth import AnyUser, MasterUser, PlayerUser
 from app.models.schemas.session_schemas import (
     SessionCreate,
     SessionRead,
@@ -25,7 +26,12 @@ async def read_all_sessions(session: AsyncSession = Depends(get_async_session)):
 
 
 @router.get("/{id}", response_model=SessionRead, summary="Получить сессию по ID")
-async def read_session(id: int, session: AsyncSession = Depends(get_async_session)):
+async def read_session(
+    id: int,
+    current_user: AnyUser,
+    session: AsyncSession = Depends(get_async_session),
+    
+):
     return await sessions.get_session_by_id(session, id)
 
 
@@ -39,7 +45,7 @@ async def create_session(
     session_data: SessionCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    
+
     res = await sessions.create_session(session, session_data)
 
     return res
