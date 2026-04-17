@@ -52,3 +52,11 @@ class PermissionDeniedError(AppException):
             message=f"This user can't access resourse",
             status_code=status.HTTP_403_FORBIDDEN,
         )
+
+
+class IncorrectStatusError(AppException):
+    def __init__(self):
+        super().__init__(
+            message=f"Incorrect status value",
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        )

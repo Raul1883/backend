@@ -4,7 +4,7 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import quest_dep, user
+from app.api import applications, quest_dep, user
 
 from app.api.sessions import genre
 from app.api.sessions import system
@@ -51,6 +51,7 @@ app_router.include_router(sessions.router)
 app_router.include_router(company.router)
 app_router.include_router(auth.router)
 app_router.include_router(characters.router)
+app_router.include_router(applications.router)
 
 
 app.include_router(app_router)

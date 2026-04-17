@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -16,7 +16,6 @@ class Config(BaseSettings):
     COOKIE_SECURE: bool = False  # True в production (HTTPS)
     COOKIE_HTTPONLY: bool = True
     COOKIE_SAMESITE: str = "lax"
-
 
 
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
