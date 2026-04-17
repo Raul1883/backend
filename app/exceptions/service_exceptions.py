@@ -43,6 +43,12 @@ class ActionNotAllowedError(AppException):
     def __init__(self, user_role: str):
         super().__init__(
             message=f"User with role: {user_role} can't do this",
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_403_FORBIDDEN,
         )
 
+class PermissionDeniedError(AppException):
+    def __init__(self):
+        super().__init__(
+            message=f"This user can't access resourse",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )

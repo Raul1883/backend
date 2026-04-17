@@ -5,9 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.db import get_async_session
 from app.db.repositories import BaseRepository
+from app.dependencies.auth import MasterUser
 from app.exceptions.service_exceptions import ForeignKeyViolationError
 from app.models.orm.models import Company, Genre, System
-from app.models.schemas.session_schemas import CompanySchema, CreateCompanySchema, ShortCompanySchema
+from app.models.schemas.session_schemas import (
+    CompanySchema,
+    CreateCompanySchema,
+    ShortCompanySchema,
+)
 from app.models.schemas.user_schemas import UserRead, UserCreate
 
 from app.services import user
@@ -27,6 +32,7 @@ router = APIRouter(
 )
 async def create_company(
     company: CreateCompanySchema,
+    current_user: MasterUser,
     session: AsyncSession = Depends(get_async_session),
 ):
     return await sessions.create_attribute(session, Company, company)
@@ -67,5 +73,9 @@ async def get_company_by_id(
 
 
 @router.delete("/company/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_company(id: int, session: AsyncSession = Depends(get_async_session)):
+async def delete_company(
+    id: int,
+    current_user: MasterUser,
+    session: AsyncSession = Depends(get_async_session),
+):
     await sessions.delete_attribute(session, Company, id)

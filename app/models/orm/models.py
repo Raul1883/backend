@@ -75,11 +75,6 @@ class Company(Base):
         back_populates="company",
     )
 
-    characters: Mapped[list["Character"]] = relationship(
-        back_populates="company",
-    )
-
-
 class Genre(Base):
     __tablename__ = "genres"
 
@@ -177,10 +172,6 @@ class Character(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    company_id: Mapped[int | None] = mapped_column(
-        ForeignKey("companies.id"),
-        nullable=True,
-    )
 
     name: Mapped[str] = mapped_column(String)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -188,9 +179,5 @@ class Character(Base):
     data_fields: Mapped[dict] = mapped_column(JSON)
 
     owner: Mapped["User"] = relationship(
-        back_populates="characters",
-    )
-
-    company: Mapped["Company | None"] = relationship(
         back_populates="characters",
     )
