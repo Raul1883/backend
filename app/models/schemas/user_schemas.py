@@ -18,6 +18,10 @@ class UserRead(BaseModel):
     class Config:
         from_attributes = True
 
+class UserSetRole(BaseModel):
+    id: int
+    role: str
+
 
 class Token(BaseModel):
     access_token: str

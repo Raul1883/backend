@@ -1,12 +1,15 @@
 from app.db.repositories import BaseRepository
-from app.exceptions.service_exceptions import UserAlreadyExistsError
+from app.exceptions.service_exceptions import (
+    IncorrectStatusError,
+    UserAlreadyExistsError,
+)
 import bcrypt
 
 from app.models.orm.models import User
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.schemas.user_schemas import UserCreate, UserRead
+from app.models.schemas.user_schemas import UserCreate, UserRead, UserSetRole
 
 
 async def hash_password(password: str) -> str:
@@ -65,3 +68,13 @@ async def get_user_by_login(session: AsyncSession, login: str):
     stmt = select(User).where(User.login == login)
     result = await session.execute(stmt)
     return result.scalar_one_or_none()
+
+
+async def set_user_role(session: AsyncSession, data: UserSetRole):
+    if data.role not in ["master", "player"]:
+        raise IncorrectStatusError
+
+    repository = BaseRepository(session, User)
+    await repository.update(data.id, role=data.role)
+
+    return await get_user_by_id(session, data.id)
