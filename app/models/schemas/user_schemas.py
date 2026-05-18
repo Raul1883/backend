@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     login: str
     password: str
     contact_info: Optional[str] = None
-    role: Optional[str] = "player"
+    secret_key: Optional[str]
 
 
 class UserRead(BaseModel):

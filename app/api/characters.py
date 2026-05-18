@@ -70,7 +70,7 @@ async def get_character_by_id_api(
     return character
 
 
-@router.put("/{character_id}", response_model=CharacterRead)
+@router.patch("/{character_id}", response_model=CharacterRead)
 async def update_character_api(
     character_id: int, 
     character_data: CharacterRequest, 
@@ -104,3 +104,4 @@ async def delete_character_api(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Foreign key violation: {e}",
         )
+

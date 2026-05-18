@@ -75,6 +75,7 @@ class Company(Base):
         back_populates="company",
     )
 
+
 class Genre(Base):
     __tablename__ = "genres"
 
@@ -171,7 +172,7 @@ class Character(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
     name: Mapped[str] = mapped_column(String)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -181,3 +182,11 @@ class Character(Base):
     owner: Mapped["User"] = relationship(
         back_populates="characters",
     )
+
+
+class SystemSchema(Base):
+    __tablename__ = "systemSchemas"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    schema: Mapped[str] = mapped_column(String)

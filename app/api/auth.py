@@ -126,7 +126,6 @@ async def logout(
 async def register(
     user_data: UserCreate, session: AsyncSession = Depends(get_async_session)
 ):
-    # Проверяем существование
     existing = await get_user_by_login(session, user_data.login)
     if existing:
         raise HTTPException(

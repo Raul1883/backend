@@ -93,7 +93,7 @@ async def update_character(
     await repository.update(
         character_id, **character_data.model_dump(exclude_unset=True), user_id=user.id
     )
-    return await get_character_by_id(session, character_id)
+    return await get_character_by_id(session, character_id, user)
 
 
 async def delete_character(session: AsyncSession, character_id: int, user: User):

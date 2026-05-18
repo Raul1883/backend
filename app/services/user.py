@@ -1,4 +1,5 @@
 from app.db.repositories import BaseRepository
+from app.config import config
 from app.exceptions.service_exceptions import (
     IncorrectStatusError,
     UserAlreadyExistsError,
@@ -38,6 +39,15 @@ async def create_user(session: AsyncSession, user_data: UserCreate):
         raise UserAlreadyExistsError(user_data_dump["login"])
 
     user_data_dump["hashed_pwd"] = await hash_password(user_data_dump.pop("password"))
+    
+    
+    if (user_data_dump["secret_key"] == config.REG_KEY):
+        user_data_dump["role"] = "master"  
+    else:
+        user_data_dump["role"] = "user"  
+
+    user_data_dump.pop("secret_key")
+    
 
     return await repository.create(**user_data_dump)
 
