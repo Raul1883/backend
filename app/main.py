@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="ttr manager", description="api for ttr manager", lifespan=lifespan)
 
 # CORS CONFIG
-origins = [config.CLIENT_URL]
+origins = [config.CLIENT_URL, "http://localhost:4173", "http://localhost:5173"]
 print("origins", origins)
 app.add_middleware(
     CORSMiddleware,

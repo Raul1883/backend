@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Config(BaseSettings):
     CLIENT_URL:str
-    DB_URL: str = "sqlite+aiosqlite:///./database.db"
+    DB_URL: str = "sqlite+aiosqlite:///./data/database.db"
 
     SECRET_KEY: str  # генерируем: openssl rand -hex 32
     REG_KEY: str

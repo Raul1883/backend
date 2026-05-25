@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class SystemSchemasPreview(BaseModel):
+    id: int
     name: str
 
     class Config:
@@ -14,7 +15,7 @@ class SystemSchemasRead(BaseModel):
     id: int
 
     name: str
-    schema: str
+    schema: Any
 
     class Config:
         from_attributes = True
@@ -22,7 +23,7 @@ class SystemSchemasRead(BaseModel):
 
 class SystemSchemasCreate(BaseModel):
     name: str
-    schema: str
+    schema: Any
 
     class Config:
         from_attributes = True

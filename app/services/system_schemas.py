@@ -1,11 +1,11 @@
+import json
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.repositories import BaseRepository
 from app.exceptions.service_exceptions import SchemaAlreadyExistsError
-from app.exceptions.service_exceptions import SchemaAlreadyExistsError
 from app.models.orm.models import SystemSchema
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
-
-
 from app.models.schemas.system_schemas import SystemSchemasCreate
 
 
@@ -14,34 +14,88 @@ async def get_all_system_schemas(session: AsyncSession):
     return await repository.get_all()
 
 
-async def create_system_schema(session: AsyncSession, schema_data: SystemSchemasCreate):
-    if await get_system_schema_by_name(session, schema_data.name):
-        raise SchemaAlreadyExistsError(name=schema_data.name)
+async def create_system_schema(
+    session: AsyncSession,
+    schema_data: SystemSchemasCreate,
+):
+    schema_data_dict = schema_data.model_dump()
+    schema_data_dict["schema"] = json.dumps(schema_data_dict["schema"])
 
     repository = BaseRepository(session, SystemSchema)
-    return await repository.create(**schema_data.model_dump())
+
+    return await repository.create(**schema_data_dict)
 
 
-async def get_system_schema_by_name(session: AsyncSession, name: str):
+async def get_system_schema_by_id(
+    session: AsyncSession,
+    schema_id: int,
+):
     result = await session.execute(
-        select(SystemSchema).where(SystemSchema.name == name)
+        select(SystemSchema).where(SystemSchema.id == schema_id)
     )
-    return result.scalar_one_or_none()
+
+    res = result.scalar_one_or_none()
+
+    if res:
+        res.schema = json.loads(res.schema)
+
+    return res
 
 
-async def update_system_schema(session: AsyncSession, schema_data: SystemSchemasCreate):
-    result = await get_system_schema_by_name(session, schema_data.name)
-    if not result:
+async def get_system_schema_by_name(
+    session: AsyncSession,
+    schema_name: str,
+):
+    result = await session.execute(
+        select(SystemSchema).where(SystemSchema.name == schema_name)
+    )
+
+    res = result.scalar_one_or_none()
+
+    if res:
+        res.schema = json.loads(res.schema)
+
+    return res
+
+
+async def update_system_schema(
+    session: AsyncSession,
+    schema_id: int,
+    schema_data: SystemSchemasCreate,
+):
+    result = await session.execute(
+        select(SystemSchema).where(SystemSchema.id == schema_id)
+    )
+
+    res = result.scalar_one_or_none()
+
+    if not res:
+        return None
+
+    schema_data_dict = schema_data.model_dump()
+    schema_data_dict["schema"] = json.dumps(schema_data_dict["schema"])
+
+    repository = BaseRepository(session, SystemSchema)
+
+    return await repository.update(
+        schema_id,
+        **schema_data_dict,
+    )
+
+
+async def delete_system_schema(
+    session: AsyncSession,
+    schema_id: int,
+):
+    result = await session.execute(
+        select(SystemSchema).where(SystemSchema.id == schema_id)
+    )
+
+    res = result.scalar_one_or_none()
+
+    if not res:
         return None
 
     repository = BaseRepository(session, SystemSchema)
-    return await repository.update(result.id, **schema_data.model_dump())
 
-
-async def delete_system_schema(session: AsyncSession, name: str):
-    result = await get_system_schema_by_name(session, name)
-    if not result:
-        return None
-
-    repository = BaseRepository(session, SystemSchema)
-    await repository.delete(result.id)
+    await repository.delete(schema_id)
