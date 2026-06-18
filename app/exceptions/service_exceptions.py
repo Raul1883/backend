@@ -18,12 +18,21 @@ class UserAlreadyExistsError(AppException):
         )
 
 
+class SchemaAlreadyExistsError(AppException):
+    def __init__(self, name: str):
+        super().__init__(
+            message=f"System schema with name '{name}' already exists",
+            status_code=status.HTTP_409_CONFLICT,
+        )
+
+
 class AttributeAlreadyExistsError(AppException):
     def __init__(self, text: str):
         super().__init__(
             message=f"Attribute with data: '{text}' already exists",
             status_code=status.HTTP_409_CONFLICT,
         )
+
 
 class AttributeNotFound(AppException):
     def __init__(self, id: str):
@@ -32,6 +41,7 @@ class AttributeNotFound(AppException):
             status_code=status.HTTP_404_NOT_FOUND,
         )
 
+
 class ForeignKeyViolationError(AppException):
     def __init__(self, message: str):
         super().__init__(
@@ -39,10 +49,26 @@ class ForeignKeyViolationError(AppException):
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         )
 
+
 class ActionNotAllowedError(AppException):
     def __init__(self, user_role: str):
         super().__init__(
             message=f"User with role: {user_role} can't do this",
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            status_code=status.HTTP_403_FORBIDDEN,
         )
 
+
+class PermissionDeniedError(AppException):
+    def __init__(self):
+        super().__init__(
+            message=f"This user can't access resourse",
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
+
+class IncorrectStatusError(AppException):
+    def __init__(self):
+        super().__init__(
+            message=f"Incorrect status value",
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        )

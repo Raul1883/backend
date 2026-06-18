@@ -1,4 +1,8 @@
+from datetime import datetime
+
 from sqlalchemy import (
+    Boolean,
+    DateTime,
     String,
     Integer,
     ForeignKey,
@@ -16,7 +20,6 @@ from sqlalchemy.orm import (
 from app.db.db import Base
 
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -26,6 +29,10 @@ class User(Base):
     contact_info: Mapped[str | None] = mapped_column(String, nullable=True)
     role: Mapped[str] = mapped_column(String)
     # example: "player,master"
+
+    refresh_tokens: Mapped[list["RefreshToken"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
     characters: Mapped[list["Character"]] = relationship(
         back_populates="owner",
@@ -41,6 +48,22 @@ class User(Base):
     )
 
 
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    token: Mapped[str] = mapped_column(String(500), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    user_agent: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
+
+    user: Mapped["User"] = relationship(back_populates="refresh_tokens")
+
+
 class Company(Base):
     __tablename__ = "companies"
 
@@ -49,10 +72,6 @@ class Company(Base):
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     sessions: Mapped[list["Session"]] = relationship(
-        back_populates="company",
-    )
-
-    characters: Mapped[list["Character"]] = relationship(
         back_populates="company",
     )
 
@@ -153,11 +172,7 @@ class Character(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    company_id: Mapped[int | None] = mapped_column(
-        ForeignKey("companies.id"),
-        nullable=True,
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
 
     name: Mapped[str] = mapped_column(String)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -168,6 +183,10 @@ class Character(Base):
         back_populates="characters",
     )
 
-    company: Mapped["Company | None"] = relationship(
-        back_populates="characters",
-    )
+
+class SystemSchema(Base):
+    __tablename__ = "systemSchemas"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    schema: Mapped[str] = mapped_column(String)

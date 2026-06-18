@@ -5,14 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.db import get_async_session
 from app.db.repositories import BaseRepository
+from app.dependencies.auth import MasterUser
 from app.exceptions.service_exceptions import ForeignKeyViolationError
 from app.models.orm.models import Company, Genre, System
 from app.models.schemas.session_schemas import (
     CompanySchema,
-    GenreSchema,
-    SessionCreate,
-    SessionRead,
-    SystemSchema,
+    CreateCompanySchema,
+    ShortCompanySchema,
 )
 from app.models.schemas.user_schemas import UserRead, UserCreate
 
@@ -21,23 +20,25 @@ from app.services import sessions
 from app.exceptions.service_exceptions import AttributeAlreadyExistsError
 
 
-company_router = APIRouter(
+router = APIRouter(
     tags=["Company"],
 )
 
-@company_router.post(
+
+@router.post(
     "/company",
     response_model=CompanySchema,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_company(
-    company_name: str,
+    company: CreateCompanySchema,
+    current_user: MasterUser,
     session: AsyncSession = Depends(get_async_session),
 ):
-    return await sessions.create_attribute(session, Company, {"title": company_name})
+    return await sessions.create_attribute(session, Company, company)
 
 
-@company_router.get(
+@router.get(
     "/company", response_model=List[CompanySchema], status_code=status.HTTP_200_OK
 )
 async def get_all_companies(
@@ -46,7 +47,20 @@ async def get_all_companies(
     return await sessions.get_all_attributes(session, Company)
 
 
-@company_router.get(
+@router.get(
+    "/company_short",
+    response_model=List[ShortCompanySchema],
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_companies_short(
+    session: AsyncSession = Depends(get_async_session),
+):
+    result = await sessions.get_all_attributes(session, Company)
+    response = [ShortCompanySchema(id=x.id, text=x.title) for x in result]
+    return response
+
+
+@router.get(
     "/company/{company_id}",
     response_model=CompanySchema,
     status_code=status.HTTP_200_OK,
@@ -58,6 +72,10 @@ async def get_company_by_id(
     return await sessions.get_attribute_by_id(session, Company, id)
 
 
-@company_router.delete("/company/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_company(id: int, session: AsyncSession = Depends(get_async_session)):
+@router.delete("/company/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_company(
+    id: int,
+    current_user: MasterUser,
+    session: AsyncSession = Depends(get_async_session),
+):
     await sessions.delete_attribute(session, Company, id)

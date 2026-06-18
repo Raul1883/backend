@@ -13,6 +13,13 @@ class GenreSchema(BaseModel):
         from_attributes = True
 
 
+class CreateGenreSchema(BaseModel):
+    text: str
+
+    class Config:
+        from_attributes = True
+
+
 class SystemSchema(BaseModel):
     id: int
     text: str
@@ -21,8 +28,22 @@ class SystemSchema(BaseModel):
         from_attributes = True
 
 
+class CreateSystemSchema(BaseModel):
+    text: str
+
+    class Config:
+        from_attributes = True
+
+
 class CompanySchema(BaseModel):
-    id: int
+    id: Optional[int]
+    title: str
+    description: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+class CreateCompanySchema(BaseModel):
     title: str
     description: Optional[str]
 
@@ -30,15 +51,25 @@ class CompanySchema(BaseModel):
         from_attributes = True
 
 
-class SessionCreate(BaseModel):
+class ShortCompanySchema(BaseModel):
+    id: Optional[int]
+    text: str
+
+    class Config:
+        from_attributes = True
+
+
+class SessionRequest(BaseModel):
     title: str
     description: Optional[str]
     scheduled_at: Optional[str] = None
-    master_id: int
     system_id: int
     genre_id: int
     company_id: Optional[int] = None
 
+
+class SessionCreate(SessionRequest):
+    master_id: int
 
 class SessionRead(BaseModel):
     id: int
@@ -48,7 +79,20 @@ class SessionRead(BaseModel):
     master: UserRead
     system: SystemSchema
     genre: GenreSchema
-    company: CompanySchema
+    company: Optional[CompanySchema] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SessionUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    scheduled_at: str | None = None
+    master_id: int | None = None
+    system_id: int | None = None
+    genre_id: int | None = None
+    company_id: int | None = None
 
     class Config:
         from_attributes = True
