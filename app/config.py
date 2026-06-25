@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Config(BaseSettings):
-    CLIENT_URL:str
+    CLIENT_URL: str
     DB_URL: str = "sqlite+aiosqlite:///./data/database.db"
 
     SECRET_KEY: str  # генерируем: openssl rand -hex 32
@@ -12,15 +12,19 @@ class Config(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    
+
+    # COUCHDB settings
+    COUCHDB_URL: str
+    COUCHDB_USER: str
+    COUCHDB_PASSWORD: str
+    DB_NAME: str
+
     # Cookie
     COOKIE_SECURE: bool = False  # True в production (HTTPS)
     COOKIE_HTTPONLY: bool = True
     COOKIE_SAMESITE: str = "lax"
 
-
-    model_config = SettingsConfigDict(env_file='.env', extra='ignore')
-    
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 config = Config()

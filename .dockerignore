@@ -1,4 +1,3 @@
-.env
 .idea
 .ipynb_checkpoints
 .mypy_cache
@@ -22,8 +21,19 @@ venv
 docs.zip
 archive.zip
 *.db
+*.env
 .env
 .venv
+
+.venv/
+venv/
+
+__pycache__/
+*.pyc
+.git/
+.idea/
+.vscode/
+*.log
 
 # vim temporary files
 *~

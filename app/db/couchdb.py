@@ -4,11 +4,12 @@ import zlib
 import httpx
 from fastapi import HTTPException
 import urllib.parse
+from app.config import config
 
-COUCHDB_URL = ""
-COUCHDB_USER = ""
-COUCHDB_PASSWORD = ""
-DB_NAME = ""
+COUCHDB_URL = config.COUCHDB_URL
+COUCHDB_USER = config.COUCHDB_USER
+COUCHDB_PASSWORD = config.COUCHDB_PASSWORD
+DB_NAME = config.DB_NAME
 
 class CouchDBClient:
     def __init__(self):
