@@ -11,4 +11,4 @@ nats-py
 pydantic_settings
 python-jose[cryptography]  
 passlib[bcrypt]           
-python-multipart            
+python-multipart

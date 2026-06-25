@@ -1,0 +1,22 @@
+[33m54d3e42[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfix-branch[m[33m)[m HEAD@{0}: commit: убрать округление
+[33m46e0817[m[33m ([m[1;31morigin/fix-branch[m[33m)[m HEAD@{1}: checkout: moving from main to fix-branch
+[33m6204cbb[m[33m ([m[1;32mmain[m[33m)[m HEAD@{2}: checkout: moving from main to main
+[33m6204cbb[m[33m ([m[1;32mmain[m[33m)[m HEAD@{3}: checkout: moving from 46e0817985481b2037454b2980270e8bf10aa0ae to main
+[33m46e0817[m[33m ([m[1;31morigin/fix-branch[m[33m)[m HEAD@{4}: commit: system_schemas fix
+[33ma607cd6[m HEAD@{5}: commit: system_schemas
+[33m71bc9de[m HEAD@{6}: commit: add user manage
+[33mb80e404[m HEAD@{7}: commit: add applicatons
+[33me9deae5[m HEAD@{8}: commit: add characteres api
+[33m66314f3[m HEAD@{9}: commit: аутх role fix
+[33m67167c0[m HEAD@{10}: commit: auth done
+[33m18202ae[m HEAD@{11}: commit: аутх
+[33m28078b4[m HEAD@{12}: commit: sessions
+[33m4799bd5[m HEAD@{13}: commit: rm .db from git
+[33m835f982[m HEAD@{14}: checkout: moving from main to 835f982d3e37fc3a517c7be4f7d97156a98a949f
+[33m6204cbb[m[33m ([m[1;32mmain[m[33m)[m HEAD@{15}: commit: rm .db from git
+[33m835f982[m HEAD@{16}: commit: done sessions fix and user fix
+[33mfef2e1e[m HEAD@{17}: commit: sessions fix
+[33m2ede8ff[m HEAD@{18}: commit: add system attrib crud and repositories and many many things
+[33m429d55e[m HEAD@{19}: commit: add db fk validator
+[33m43279b3[m HEAD@{20}: commit: add sessionsapi
+[33m62f161e[m HEAD@{21}: commit (initial): fk
