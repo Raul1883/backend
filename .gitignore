@@ -21,7 +21,7 @@ venv
 docs.zip
 archive.zip
 *.db
-.env
+*.env
 .venv
 
 .venv/

@@ -12,9 +12,11 @@ from app.api.sessions import sessions
 from app.api.sessions import company
 from app.api import auth
 from app.api import characters
+from app.api import wiki
 
 
 from app.db.db import init_db
+from app.db.couchdb import couch_client
 from app.config import config
 from app.exceptions.service_exceptions import AppException
 from fastapi.responses import Response
@@ -24,7 +26,9 @@ from fastapi.responses import Response
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    couch_client.start()
     yield
+    await couch_client.stop()
 
 
 app = FastAPI(title="ttr manager", description="api for ttr manager", lifespan=lifespan)
@@ -60,6 +64,7 @@ app_router.include_router(auth.router)
 app_router.include_router(characters.router)
 app_router.include_router(applications.router)
 app_router.include_router(system_schemas.router)
+app_router.include_router(wiki.router)
 
 
 app.include_router(app_router)
